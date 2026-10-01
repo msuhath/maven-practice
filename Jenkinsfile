@@ -5,19 +5,23 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn compile'
+                echo 'Starting Maven Build...'
+                sh 'mvn clean compile'
             }
         }
 
         stage('Test') {
             steps {
+                echo 'Running Tests...'
                 sh 'mvn test'
             }
         }
 
         stage('Package') {
             steps {
+                echo 'Creating JAR file...'
                 sh 'mvn package'
+                sh 'ls -lh target/'
             }
         }
 
