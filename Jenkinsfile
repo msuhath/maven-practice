@@ -21,9 +21,21 @@ pipeline {
             steps {
                 echo 'Creating JAR file...'
                 sh 'mvn package'
-                sh 'ls -lh target/'
             }
         }
+    }
 
+    post {
+        success {
+            echo '🎉 Pipeline completed successfully!'
+        }
+
+        failure {
+            echo '❌ Pipeline failed!'
+        }
+
+        always {
+            echo 'Pipeline execution finished.'
+        }
     }
 }
