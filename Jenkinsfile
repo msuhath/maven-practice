@@ -5,22 +5,25 @@ pipeline {
 
         stage('Build') {
             steps {
-                echo 'Starting Maven Build...'
                 sh 'mvn clean compile'
             }
         }
 
         stage('Test') {
             steps {
-                echo 'Running Tests...'
                 sh 'mvn test'
             }
         }
 
         stage('Package') {
             steps {
-                echo 'Creating JAR file...'
                 sh 'mvn package'
+            }
+        }
+
+        stage('Archive') {
+            steps {
+                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
             }
         }
     }
@@ -32,10 +35,6 @@ pipeline {
 
         failure {
             echo '❌ Pipeline failed!'
-        }
-
-        always {
-            echo 'Pipeline execution finished.'
         }
     }
 }
