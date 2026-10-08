@@ -5,7 +5,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn clean compile'
+                sh 'mvn clean'
             }
         }
 
@@ -26,15 +26,20 @@ pipeline {
                 archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
             }
         }
+
+        stage('Deploy') {
+            steps {
+                sh 'echo "Deploying application..."'
+                sh 'cp target/*.jar /tmp/maven-practice.jar'
+                sh 'echo "Application deployed successfully!"'
+            }
+        }
+
     }
 
     post {
         success {
             echo '🎉 Pipeline completed successfully!'
-        }
-
-        failure {
-            echo '❌ Pipeline failed completely!'
         }
     }
 }
