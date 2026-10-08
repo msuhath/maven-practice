@@ -1,23 +1,44 @@
 pipeline {
+
     agent any
 
     stages {
 
+        stage('Checkout') {
+            steps {
+                echo 'Checking out source code...'
+                checkout scm
+            }
+        }
+
         stage('Build') {
             steps {
-                sh 'mvn clean'
+                echo 'Building Maven project...'
+                sh 'mvn clean package'
             }
         }
 
         stage('Test') {
             steps {
+                echo 'Running tests...'
                 sh 'mvn test'
             }
         }
 
-        stage('Package') {
+        stage('Credentials Test') {
             steps {
-                sh 'mvn package'
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'admin-credential',
+                        usernameVariable: 'USERNAME',
+                        passwordVariable: 'PASSWORD'
+                    )
+                ]) {
+                    sh '''
+                        echo "Username is: $USERNAME"
+                        echo "Password is protected by Jenkins"
+                    '''
+                }
             }
         }
 
@@ -34,12 +55,15 @@ pipeline {
                 sh 'echo "Application deployed successfully!"'
             }
         }
-
     }
 
     post {
         success {
             echo '🎉 Pipeline completed successfully!'
+        }
+
+        failure {
+            echo '❌ Pipeline failed!'
         }
     }
 }
